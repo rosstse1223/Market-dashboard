@@ -1,0 +1,22 @@
+name: Daily Dashboard Refresh
+
+on:
+  schedule:
+    - cron: '0 14 * * 1-5'   # Runs at 10 PM HKT (2 PM UTC), Mon–Fri
+  workflow_dispatch:           # Also allows manual trigger
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Touch index to trigger redeploy
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          touch .last-refresh
+          echo "Refreshed at $(date)" > .last-refresh
+          git add .last-refresh
+          git commit -m "Auto-refresh: $(date)" || echo "Nothing to commit"
+          git push
