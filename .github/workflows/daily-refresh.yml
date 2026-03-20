@@ -2,8 +2,11 @@ name: Daily Dashboard Refresh
 
 on:
   schedule:
-    - cron: '0 14 * * 1-5'   # Runs at 10 PM HKT (2 PM UTC), Mon–Fri
-  workflow_dispatch:           # Also allows manual trigger
+    - cron: '0 14 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write        # ← THIS LINE is the key fix
 
 jobs:
   refresh:
