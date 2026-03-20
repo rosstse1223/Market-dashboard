@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stock Chart Viewer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <h1>📈 Stock Chart Viewer</h1>
+  <p style="color:#aaa; font-size:13px;">↑ ↓ Use arrow keys to navigate · Data auto-refreshed daily via GitHub Actions · Yahoo Finance</p>
+
+  <!-- STOCK TABLE -->
+  <div class="section-title">📋 Watchlist</div>
+  <div class="column-guide">
+    <b>Grade</b>: ABC rating (A = EMA10 &gt; EMA20 &gt; SMA50 uptrend; B = mixed; C = downtrend) &nbsp;|&nbsp;
+    <b>ATRx</b>: Distance from SMA50 in ATR units &nbsp;|&nbsp;
+    <b>1M-VARS</b>: Volatility Adjusted Relative Strength vs SPY over last 21 days (0–100%)
+  </div>
+  <div id="table-container">
+    <table id="stock-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Ticker</th>
+          <th>Price</th>
+          <th>Change %</th>
+          <th>Grade</th>
+          <th>ATRx</th>
+          <th>1M-VARS</th>
+          <th>Volume</th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <tr><td colspan="8" style="text-align:center; color:#aaa;">Loading stock data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ECONOMIC CALENDAR -->
+  <div class="section-title">📅 Economic Calendar</div>
+  <div class="widget-container">
+    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22500%22%2C%22importanceFilter%22%3A%22-1%2C0%2C1%22%2C%22countryFilter%22%3A%22us%2Ceu%2Cgb%2Ccn%2Cjp%22%7D"
+      width="100%" height="500" frameborder="0" scrolling="no"
+      allowtransparency="true" allowfullscreen="true">
+    </iframe>
+  </div>
+
+  <!-- MARKET BREADTH -->
+  <div class="section-title">📊 Market Breadth — World Markets</div>
+  <div class="widget-container">
+    <iframe src="https://www.tradingview.com/embed-widget/market-overview/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22dateRange%22%3A%221D%22%2C%22showSymbolLogo%22%3Atrue%2C%22isTransparent%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22600%22%7D"
+      width="100%" height="600" frameborder="0" scrolling="no"
+      allowtransparency="true" allowfullscreen="true">
+    </iframe>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
