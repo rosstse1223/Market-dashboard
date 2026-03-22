@@ -120,3 +120,12 @@ h1 { color: #58a6ff; margin-bottom: 6px; font-size: 22px; }
 .fg-neutral       { color: #d29922; }
 .fg-greed         { color: #7ee787; }
 .fg-extreme-greed { color: #3fb950; }
+
+.source-link {
+  font-size: 10px;
+  color: #8b949e;
+  text-decoration: none;
+  margin-left: 6px;
+  font-weight: normal;
+}
+.source-link:hover { color: #58a6ff; }
