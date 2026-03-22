@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════
-// CONFIG
+// CONFIG — proxy switched to allorigins (corsproxy.io blocked)
 // ════════════════════════════════════════════════════════════════
 const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 const OVERALL_TICKERS = ["SPY", "QQQ", "DIA", "IWM", "ARKK", "^VIX"];
@@ -43,7 +43,6 @@ function calcATR14(closes, highs, lows) {
   return last14.length ? last14.reduce((a, b) => a + b, 0) / last14.length : 0;
 }
 
-// RS Rating: 40%×P3 + 20%×P6 + 20%×P9 + 20%×P12 vs SPY, mapped 1–99
 function calcRSRating(closes, spyC) {
   function pr(arr, days) {
     const i = arr.length - 1, j = i - days;
@@ -56,7 +55,6 @@ function calcRSRating(closes, spyC) {
   return Math.max(1, Math.min(99, Math.round(50 + 49 * Math.tanh(raw * 4))));
 }
 
-// VARS: rolling 21-day (Sharpe_stock − Sharpe_SPY) for last numBars days
 function calcVARSHistory(closes, spyC, numBars = 20, win = 21) {
   const out = [];
   function dailyRet(arr, end, w) {
@@ -80,7 +78,6 @@ function calcVARSHistory(closes, spyC, numBars = 20, win = 21) {
   return out;
 }
 
-// Inline SVG histogram for VARS
 function varsSVG(vals) {
   const W = 88, H = 32, mid = H / 2;
   const maxA = Math.max(...vals.map(v => Math.abs(v)), 0.2);
@@ -90,25 +87,24 @@ function varsSVG(vals) {
     const h = Math.max(Math.abs(v) / maxA * (mid - 2), 1);
     const x = (i * bw + 0.5).toFixed(1);
     const y = (v >= 0 ? mid - h : mid).toFixed(1);
-    return `<rect x="${x}" y="${y}" width="${(bw-1).toFixed(1)}" height="${h.toFixed(1)}" fill="${v >= 0 ? "#3fb950" : "#f85149"}" rx="0.5"/>`;
+    return `<rect x="${x}" y="${y}" width="${(bw-1).toFixed(1)}" height="${h.toFixed(1)}" fill="${v >= 0 ? '#3fb950' : '#f85149'}" rx="0.5"/>`;
   }).join("");
   return `<svg width="${W}" height="${H}" style="display:block;margin:auto;"><rect width="${W}" height="${H}" fill="#0d1117" rx="3"/>${line}${bars}</svg>`;
 }
 
-// MA cell: ▲/▼ (price vs MA) + ↑/↓ (MA trend over 3 days)
 function maCell(price, maArr) {
   const cur  = maArr[maArr.length - 1];
   const prev = maArr[maArr.length - 4];
   if (!cur) return `<td style="color:#555;text-align:center;">—</td>`;
   const above = price > cur, up = prev ? cur > prev : false;
   return `<td style="text-align:center;">` +
-    `<span style="color:${above ? "#3fb950" : "#f85149"}">${above ? "▲" : "▼"}</span>` +
-    `<span style="color:${up    ? "#3fb950" : "#f85149"};margin-left:3px;">${up ? "↑" : "↓"}</span>` +
+    `<span style="color:${above ? '#3fb950' : '#f85149'}">${above ? '▲' : '▼'}</span>` +
+    `<span style="color:${up    ? '#3fb950' : '#f85149'};margin-left:3px;">${up ? '↑' : '↓'}</span>` +
     `</td>`;
 }
 
 // ════════════════════════════════════════════════════════════════
-// FETCH TICKER DATA (2 years of daily OHLC)
+// FETCH
 // ════════════════════════════════════════════════════════════════
 async function fetchTickerData(ticker) {
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=2y`;
@@ -124,12 +120,12 @@ async function fetchTickerData(ticker) {
     }
     return {
       ticker,
-      display: ticker.replace("^", ""),
+      display:   ticker.replace("^", ""),
       price:     meta.regularMarketPrice,
       prevClose: meta.chartPreviousClose,
-      closes: fillNulls(q.close),
-      highs:  fillNulls(q.high),
-      lows:   fillNulls(q.low),
+      closes:    fillNulls(q.close),
+      highs:     fillNulls(q.high),
+      lows:      fillNulls(q.low),
     };
   } catch(e) {
     return { ticker, display: ticker.replace("^",""), error: true };
@@ -141,6 +137,7 @@ async function fetchTickerData(ticker) {
 // ════════════════════════════════════════════════════════════════
 async function buildOverallTable() {
   const tbody = document.getElementById("table-body");
+  if (!tbody) return;
   tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:#aaa;">Loading data…</td></tr>`;
 
   const allData = await Promise.all(OVERALL_TICKERS.map(fetchTickerData));
@@ -158,22 +155,18 @@ async function buildOverallTable() {
 
     const { display, price, prevClose, closes, highs, lows } = d;
     const isVIX = display === "VIX";
+    const n = closes.length;
 
     const ema10  = calcEMA(closes, 10);
     const ema20  = calcEMA(closes, 20);
     const sma50  = calcSMA(closes, 50);
     const sma200 = calcSMA(closes, 200);
-    const n = closes.length;
 
-    // Daily Δ (prev completed day)
     const dailyChg = n >= 2 && closes[n-2] > 0
       ? ((closes[n-1] - closes[n-2]) / closes[n-2] * 100).toFixed(2) : null;
-
-    // Live Δ (today vs prev close)
-    const liveChg = prevClose > 0
+    const liveChg  = prevClose > 0
       ? ((price - prevClose) / prevClose * 100).toFixed(2) : null;
 
-    // ATRx/50MA
     let atrxStr = "—", atrxColor = "#e6edf3";
     if (!isVIX) {
       const s50 = sma50[sma50.length - 1];
@@ -190,7 +183,6 @@ async function buildOverallTable() {
       }
     }
 
-    // RS Rating
     let rsStr = "—", rsColor = "#e6edf3";
     if (!isVIX && spyC.length > 200) {
       const rs = calcRSRating(closes, spyC);
@@ -200,14 +192,12 @@ async function buildOverallTable() {
       else if (rs <= 40) rsColor = "#f85149";
     }
 
-    // VARS sparkline
     let varsCell = `<td style="color:#555;text-align:center;">—</td>`;
     if (!isVIX && spyC.length > 42) {
       const v = calcVARSHistory(closes, spyC, 20, 21);
       varsCell = `<td style="padding:3px 8px;">${varsSVG(v)}</td>`;
     }
 
-    // Format % change
     function fmtPct(v) {
       if (v === null) return { str: "—", cls: "" };
       return {
@@ -296,7 +286,7 @@ async function loadNAAIM() {
     if (score !== null) {
       let colour = "#d29922";
       if (score >= 75) colour = "#3fb950";
-      if (score < 40)  colour = "#f85149";
+      if (score <  40) colour = "#f85149";
       document.getElementById("naaim-score").textContent  = score.toFixed(2);
       document.getElementById("naaim-score").style.color  = colour;
       document.getElementById("naaim-label").textContent  =
@@ -339,6 +329,7 @@ async function loadNetNewHL() {
     const labelEl = document.getElementById("nnhl-label");
     const barEl   = document.getElementById("nnhl-bar");
     const brkEl   = document.getElementById("nnhl-breakdown");
+    if (!scoreEl) return;
     scoreEl.textContent = (total >= 0 ? "+" : "") + total;
     if (total > 100) {
       scoreEl.style.color = "#3fb950"; labelEl.style.color = "#3fb950";
@@ -362,7 +353,8 @@ async function loadNetNewHL() {
       `<b>NASDAQ</b>: +${naH} / −${naL} = <b style="color:${nc(naNet)}">${naNet>=0?"+":""}${naNet}</b><br>` +
       `<b>AMEX</b>: +${axH} / −${axL} = <b style="color:${nc(axNet)}">${axNet>=0?"+":""}${axNet}</b>`;
   } catch(e) {
-    document.getElementById("nnhl-label").textContent = "Unable to load — try refreshing";
+    const el = document.getElementById("nnhl-label");
+    if (el) el.textContent = "Unable to load — try refreshing";
   }
 }
 loadNetNewHL();
