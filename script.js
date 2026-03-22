@@ -195,3 +195,90 @@ async function loadNAAIM() {
 loadNAAIM();
 // ─────────────────────────────────────────────────────────────
 
+// ── NET NEW 52-WK HIGHS/LOWS (NYSE + NASDAQ + AMEX) ─────────
+async function loadNetNewHL() {
+  const symbols = {
+    NYSE_H:  "NYHGH",
+    NYSE_L:  "NYLOW",
+    NASD_H:  "NAHGH",
+    NASD_L:  "NALOW",
+    AMEX_H:  "AXHGH",
+    AMEX_L:  "AXLOW"
+  };
+
+  async function fetchLatest(ticker) {
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&range=5d`;
+    try {
+      const res  = await fetch(CORS_PROXY + encodeURIComponent(url));
+      const json = await res.json();
+      const closes = json.chart.result[0].indicators.quote[0].close;
+      // Get most recent non-null value
+      for (let i = closes.length - 1; i >= 0; i--) {
+        if (closes[i] !== null) return Math.round(closes[i]);
+      }
+      return 0;
+    } catch(e) { return 0; }
+  }
+
+  try {
+    const [nyH, nyL, naH, naL, axH, axL] = await Promise.all([
+      fetchLatest(symbols.NYSE_H),
+      fetchLatest(symbols.NYSE_L),
+      fetchLatest(symbols.NASD_H),
+      fetchLatest(symbols.NASD_L),
+      fetchLatest(symbols.AMEX_H),
+      fetchLatest(symbols.AMEX_L)
+    ]);
+
+    const nyNet   = nyH - nyL;
+    const naNet   = naH - naL;
+    const axNet   = axH - axL;
+    const totalNet = nyNet + naNet + axNet;
+    const totalH   = nyH + naH + axH;
+    const totalL   = nyL + naL + axL;
+
+    // Score element
+    const scoreEl = document.getElementById("nnhl-score");
+    const labelEl = document.getElementById("nnhl-label");
+    const barEl   = document.getElementById("nnhl-bar");
+    const brkEl   = document.getElementById("nnhl-breakdown");
+
+    scoreEl.textContent = (totalNet >= 0 ? "+" : "") + totalNet;
+
+    // Colour and label
+    if (totalNet > 100) {
+      scoreEl.style.color = "#3fb950";
+      labelEl.textContent = "✅ Healthy Breadth — Bullish";
+      labelEl.style.color = "#3fb950";
+    } else if (totalNet > 0) {
+      scoreEl.style.color = "#7ee787";
+      labelEl.textContent = "🟡 Slight Majority — Cautiously Bullish";
+      labelEl.style.color = "#d29922";
+    } else if (totalNet > -100) {
+      scoreEl.style.color = "#e3834a";
+      labelEl.textContent = "🟠 Net Negative — Cautious";
+      labelEl.style.color = "#e3834a";
+    } else {
+      scoreEl.style.color = "#f85149";
+      labelEl.textContent = "🔴 Broad Weakness — Bearish";
+      labelEl.style.color = "#f85149";
+    }
+
+    // Bar: center = 50%, scale ±500 stocks = full bar width
+    const pct = Math.min(Math.max(50 + (totalNet / 500) * 50, 2), 98);
+    barEl.style.width      = pct + "%";
+    barEl.style.background = totalNet >= 0 ? "#3fb950" : "#f85149";
+
+    // Breakdown table
+    brkEl.innerHTML =
+      `<b>NYSE</b>: +${nyH} highs / −${nyL} lows = <b style="color:${nyNet>=0?'#3fb950':'#f85149'}">${nyNet>=0?'+':''}${nyNet}</b><br>` +
+      `<b>NASDAQ</b>: +${naH} highs / −${naL} lows = <b style="color:${naNet>=0?'#3fb950':'#f85149'}">${naNet>=0?'+':''}${naNet}</b><br>` +
+      `<b>AMEX</b>: +${axH} highs / −${axL} lows = <b style="color:${axNet>=0?'#3fb950':'#f85149'}">${axNet>=0?'+':''}${axNet}</b>`;
+
+  } catch(e) {
+    document.getElementById("nnhl-label").textContent = "Unable to load — try refreshing";
+  }
+}
+
+loadNetNewHL();
+// ─────────────────────────────────────────────────────────────
