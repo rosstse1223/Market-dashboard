@@ -12,31 +12,16 @@
   <p style="color:#aaa; font-size:13px;">↑ ↓ Use arrow keys to navigate · Data auto-refreshed daily via GitHub Actions · Yahoo Finance</p>
 
   <!-- STOCK TABLE -->
-  <div class="section-title">📋 Watchlist</div>
-  <div class="column-guide">
-    <b>Grade</b>: ABC rating (A = EMA10 &gt; EMA20 &gt; SMA50 uptrend; B = mixed; C = downtrend) &nbsp;|&nbsp;
-    <b>ATRx</b>: Distance from SMA50 in ATR units &nbsp;|&nbsp;
-    <b>1M-VARS</b>: Volatility Adjusted Relative Strength vs SPY over last 21 days (0–100%)
-  </div>
-  <div id="table-container">
-    <table id="stock-table">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Ticker</th>
-          <th>Price</th>
-          <th>Change %</th>
-          <th>Grade</th>
-          <th>ATRx</th>
-          <th>1M-VARS</th>
-          <th>Volume</th>
-        </tr>
-      </thead>
-      <tbody id="table-body">
-        <tr><td colspan="8" style="text-align:center; color:#aaa;">Loading stock data...</td></tr>
-      </tbody>
-    </table>
-  </div>
+<div class="section-title">📊 Overall</div>
+<div class="column-guide">
+  <b>Daily Δ</b>: Previous completed day's change &nbsp;|&nbsp;
+  <b>Live Δ</b>: Today's live change vs prev close &nbsp;|&nbsp;
+  <b>EMA10 / EMA20 / SMA50 / SMA200</b>: ▲=price above MA &nbsp;▼=price below &nbsp;↑=MA trending up &nbsp;↓=MA trending down &nbsp;|&nbsp;
+  <b>ATRx</b>: ATR% multiples from 50-MA (7–10+ = extended, take partial profits) &nbsp;|&nbsp;
+  <b>RS</b>: Relative Strength Rating 1–99 vs SPY (80+ = strong) &nbsp;|&nbsp;
+  <b>VARS (20d)</b>: Volatility-Adjusted RS histogram vs SPY — green bars = outperforming
+</div>
+
 
   <!-- ECONOMIC CALENDAR -->
   <div class="section-title">📅 Economic Calendar</div>
