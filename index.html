@@ -41,10 +41,11 @@
   <!-- ECONOMIC CALENDAR -->
   <div class="section-title">📅 Economic Calendar</div>
   <div class="widget-container">
-    <iframe src="https://www.tradingview.com/embed-widget/events/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22500%22%2C%22importanceFilter%22%3A%22-1%2C0%2C1%22%2C%22countryFilter%22%3A%22us%2Ceu%2Cgb%2Ccn%2Cjp%22%7D"
-      width="100%" height="500" frameborder="0" scrolling="no"
-      allowtransparency="true" allowfullscreen="true">
-    </iframe>
+<iframe src="https://www.tradingview.com/embed-widget/events/?locale=en#%7B%22colorTheme%22%3A%22dark%22%2C%22isTransparent%22%3Afalse%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22500%22%2C%22importanceFilter%22%3A%22-1%2C0%2C1%22%2C%22countryFilter%22%3A%22us%22%7D"
+  width="100%" height="500" frameborder="0" scrolling="no"
+  allowtransparency="true" allowfullscreen="true">
+</iframe>
+
   </div>
 
 
@@ -120,24 +121,24 @@
     </div>
   </div>
 
-<!-- Net New High vs Low (chart image from StockCharts) -->
-<div class="breadth-card" style="min-height:220px;">
-  <h3>📉 NYSE Net New 52-Wk High vs Low <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank" class="source-link">↗ StockCharts</a></h3>
-  <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank">
-    <img
-      src="https://stockcharts.com/c-sc/sc?s=%24NYHL&p=D&yr=1&mn=0&dy=0&i=t72278500715c&r=1711080000000&O=&D=0&E=0&y=40&a=&m=0&x=p57832085850c1&sz=l&g=0&id=p12345&q=l"
-      alt="$NYHL Chart from StockCharts"
-      style="width:100%;border-radius:6px;margin-top:6px;"
-      onerror="this.style.display='none';document.getElementById('nyhl-fallback').style.display='block';"
-    />
-  </a>
-  <div id="nyhl-fallback" style="display:none;text-align:center;padding:20px;">
-    <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank"
-       style="background:#21262d;color:#58a6ff;padding:10px 20px;border-radius:6px;text-decoration:none;border:1px solid #30363d;">
-      📊 View $NYHL Chart on StockCharts →
-    </a>
+<!-- Net New Highs/Lows — NYSE + NASDAQ + AMEX combined -->
+<div class="breadth-card" style="min-height:240px;">
+  <h3>📉 Net New 52-Wk Highs/Lows
+    <a href="https://www.tradingview.com/script/FVRYDtdR/" target="_blank" class="source-link">↗ TradingView</a>
+  </h3>
+  <div id="nnhl-score" style="font-size:48px;font-weight:bold;line-height:1;margin-top:8px;">–</div>
+  <div id="nnhl-label" style="font-size:13px;font-weight:bold;margin-top:6px;">Loading...</div>
+
+  <!-- Bar chart -->
+  <div style="margin-top:12px;width:100%;background:#21262d;border-radius:4px;height:10px;overflow:hidden;">
+    <div id="nnhl-bar" style="height:10px;width:50%;background:#58a6ff;border-radius:4px;transition:width 0.6s,background 0.6s;"></div>
   </div>
+
+  <!-- Exchange breakdown -->
+  <div id="nnhl-breakdown" style="font-size:11px;color:#8b949e;margin-top:10px;line-height:1.8;"></div>
+  <div style="font-size:10px;color:#555;margin-top:6px;">NYSE + NASDAQ + AMEX · 52-Week</div>
 </div>
+
 
 </div>
   
