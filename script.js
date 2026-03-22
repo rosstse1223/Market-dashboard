@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════════════
-const CORS_PROXY = "https://corsproxy.io/?";
+const CORS_PROXY = "https://api.allorigins.win/raw?url=";
 const OVERALL_TICKERS = ["SPY", "QQQ", "DIA", "IWM", "ARKK", "^VIX"];
 
 // ════════════════════════════════════════════════════════════════
