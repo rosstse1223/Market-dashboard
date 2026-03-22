@@ -91,3 +91,41 @@ async function buildTable() {
 }
 
 buildTable();
+
+// ── FEAR & GREED INDEX ────────────────────────────────────────
+async function loadFearGreed() {
+  const url = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2024-01-01";
+  try {
+    const res = await fetch(CORS_PROXY + encodeURIComponent(url));
+    const json = await res.json();
+    const current = json.fear_and_greed;
+    const score = Math.round(current.score);
+    const rating = current.rating;          // e.g. "Fear", "Greed"
+    const prevScore = Math.round(json.fear_and_greed_historical.data.slice(-2)[0].y);
+
+    // Color class
+    let cls = "fg-neutral";
+    if (score <= 24)      cls = "fg-extreme-fear";
+    else if (score <= 44) cls = "fg-fear";
+    else if (score <= 55) cls = "fg-neutral";
+    else if (score <= 74) cls = "fg-greed";
+    else                  cls = "fg-extreme-greed";
+
+    // Capitalise label nicely
+    const label = rating.replace(/_/g, " ")
+                         .toLowerCase()
+                         .replace(/\b\w/g, c => c.toUpperCase());
+
+    document.getElementById("fg-score").textContent = score;
+    document.getElementById("fg-score").className = cls;
+    document.getElementById("fg-label").textContent = label;
+    document.getElementById("fg-label").className = cls;
+    document.getElementById("fg-prev").textContent = `Previous: ${prevScore}`;
+  } catch(e) {
+    document.getElementById("fg-label").textContent = "Unable to load";
+  }
+}
+
+loadFearGreed();
+// ─────────────────────────────────────────────────────────────
+
