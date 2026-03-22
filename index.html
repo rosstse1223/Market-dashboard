@@ -116,53 +116,31 @@
 <div class="section-title">🧠 Sentiment &amp; Market Breadth</div>
 <div class="breadth-grid">
 
-  <!-- Fear & Greed Index (fetched via JS) -->
-  <div class="breadth-card" id="fg-card">
-    <h3>😨 Fear &amp; Greed Index</h3>
-    <div id="fg-score">–</div>
-    <div id="fg-label">Loading...</div>
-    <div id="fg-prev"></div>
-  </div>
+<!-- Fear & Greed Index (from CNN) -->
+<div class="breadth-card" id="fg-card">
+  <h3>😨 Fear &amp; Greed Index <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" class="source-link">↗ CNN</a></h3>
+  <div id="fg-score">–</div>
+  <div id="fg-label">Loading...</div>
+  <div id="fg-prev"></div>
+  <div id="fg-updated" style="font-size:11px;color:#555;margin-top:6px;"></div>
+</div>
 
-  <!-- NAAIM Exposure Index -->
-  <div class="breadth-card">
-    <h3>📐 NAAIM Exposure Index (Weekly)</h3>
-    <div class="tradingview-widget-container" style="height:140px;">
-      <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-      {
-        "symbol": "NAAIM",
-        "width": "100%",
-        "height": "140",
-        "locale": "en",
-        "dateRange": "3M",
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "autosize": false
-      }
-      </script>
-    </div>
-  </div>
+<!-- NAAIM Exposure Index (from naaim.org) -->
+<div class="breadth-card" id="naaim-card">
+  <h3>📐 NAAIM Exposure Index <a href="https://naaim.org/programs/naaim-exposure-index/" target="_blank" class="source-link">↗ NAAIM</a></h3>
+  <div id="naaim-score" style="font-size:42px;font-weight:bold;line-height:1;color:#58a6ff;">–</div>
+  <div id="naaim-label" style="font-size:13px;color:#8b949e;margin-top:6px;">Loading...</div>
+  <div id="naaim-prev" style="font-size:12px;color:#555;margin-top:4px;"></div>
+  <div style="font-size:11px;color:#555;margin-top:8px;">Range: −200 (leveraged short) → +200 (leveraged long)</div>
+</div>
 
-  <!-- Put / Call Ratio -->
-  <div class="breadth-card">
-    <h3>📊 CBOE Total Put / Call Ratio</h3>
-    <div class="tradingview-widget-container" style="height:140px;">
-      <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-      {
-        "symbol": "USI:PCC",
-        "width": "100%",
-        "height": "140",
-        "locale": "en",
-        "dateRange": "3M",
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "autosize": false
-      }
-      </script>
-    </div>
-  </div>
+<!-- Put / Call Ratio (from CNN Fear & Greed) -->
+<div class="breadth-card" id="pc-card">
+  <h3>📊 Put / Call Ratio <a href="https://edition.cnn.com/markets/fear-and-greed" target="_blank" class="source-link">↗ CNN</a></h3>
+  <div id="pc-score" style="font-size:42px;font-weight:bold;line-height:1;">–</div>
+  <div id="pc-label" style="font-size:13px;margin-top:6px;font-weight:bold;">Loading...</div>
+  <div style="font-size:11px;color:#8b949e;margin-top:8px;">Score 0–100 · 0=Extreme Fear · 100=Extreme Greed</div>
+</div>
 
   <!-- % Stocks Above 20 SMA -->
   <div class="breadth-card">
@@ -204,25 +182,24 @@
     </div>
   </div>
 
-  <!-- Net New High vs New Low -->
-  <div class="breadth-card">
-    <h3>📉 NYSE Net New 52-Wk High vs Low</h3>
-    <div class="tradingview-widget-container" style="height:140px;">
-      <div class="tradingview-widget-container__widget"></div>
-      <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js" async>
-      {
-        "symbol": "NYHL",
-        "width": "100%",
-        "height": "140",
-        "locale": "en",
-        "dateRange": "3M",
-        "colorTheme": "dark",
-        "isTransparent": true,
-        "autosize": false
-      }
-      </script>
-    </div>
+<!-- Net New High vs Low (chart image from StockCharts) -->
+<div class="breadth-card" style="min-height:220px;">
+  <h3>📉 NYSE Net New 52-Wk High vs Low <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank" class="source-link">↗ StockCharts</a></h3>
+  <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank">
+    <img
+      src="https://stockcharts.com/c-sc/sc?s=%24NYHL&p=D&yr=1&mn=0&dy=0&i=t72278500715c&r=1711080000000&O=&D=0&E=0&y=40&a=&m=0&x=p57832085850c1&sz=l&g=0&id=p12345&q=l"
+      alt="$NYHL Chart from StockCharts"
+      style="width:100%;border-radius:6px;margin-top:6px;"
+      onerror="this.style.display='none';document.getElementById('nyhl-fallback').style.display='block';"
+    />
+  </a>
+  <div id="nyhl-fallback" style="display:none;text-align:center;padding:20px;">
+    <a href="https://stockcharts.com/sc3/ui/?s=%24NYHL" target="_blank"
+       style="background:#21262d;color:#58a6ff;padding:10px 20px;border-radius:6px;text-decoration:none;border:1px solid #30363d;">
+      📊 View $NYHL Chart on StockCharts →
+    </a>
   </div>
+</div>
 
 </div>
   
