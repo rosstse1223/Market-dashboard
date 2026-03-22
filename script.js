@@ -93,39 +93,105 @@ async function buildTable() {
 buildTable();
 
 // ── FEAR & GREED INDEX ────────────────────────────────────────
+// ── FEAR & GREED + PUT/CALL FROM CNN ────────────────────────
 async function loadFearGreed() {
-  const url = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata/2024-01-01";
+  const url = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata/";
   try {
     const res = await fetch(CORS_PROXY + encodeURIComponent(url));
     const json = await res.json();
-    const current = json.fear_and_greed;
-    const score = Math.round(current.score);
-    const rating = current.rating;          // e.g. "Fear", "Greed"
-    const prevScore = Math.round(json.fear_and_greed_historical.data.slice(-2)[0].y);
 
-    // Color class
-    let cls = "fg-neutral";
-    if (score <= 24)      cls = "fg-extreme-fear";
-    else if (score <= 44) cls = "fg-fear";
-    else if (score <= 55) cls = "fg-neutral";
-    else if (score <= 74) cls = "fg-greed";
-    else                  cls = "fg-extreme-greed";
+    // ── Overall Fear & Greed ─────────────────────────
+    const current  = json.fear_and_greed;
+    const score    = Math.round(current.score);
+    const rating   = current.rating;
+    const history  = json.fear_and_greed_historical.data;
+    const prevScore = history.length >= 2
+      ? Math.round(history[history.length - 2].y)
+      : "–";
+    const updatedDate = new Date(current.timestamp)
+      .toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-    // Capitalise label nicely
-    const label = rating.replace(/_/g, " ")
-                         .toLowerCase()
-                         .replace(/\b\w/g, c => c.toUpperCase());
+    let fgClass = "fg-neutral";
+    if      (score <= 24) fgClass = "fg-extreme-fear";
+    else if (score <= 44) fgClass = "fg-fear";
+    else if (score <= 55) fgClass = "fg-neutral";
+    else if (score <= 74) fgClass = "fg-greed";
+    else                  fgClass = "fg-extreme-greed";
 
-    document.getElementById("fg-score").textContent = score;
-    document.getElementById("fg-score").className = cls;
-    document.getElementById("fg-label").textContent = label;
-    document.getElementById("fg-label").className = cls;
-    document.getElementById("fg-prev").textContent = `Previous: ${prevScore}`;
+    const fgLabel = rating.replace(/_/g, " ")
+      .toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+    document.getElementById("fg-score").textContent     = score;
+    document.getElementById("fg-score").className       = fgClass;
+    document.getElementById("fg-label").textContent     = fgLabel;
+    document.getElementById("fg-label").className       = fgClass;
+    document.getElementById("fg-prev").textContent      = `Previous close: ${prevScore}`;
+    document.getElementById("fg-updated").textContent   = `Updated: ${updatedDate}`;
+
+    // ── Put / Call Ratio (CNN component) ─────────────
+    const pc      = json.put_call_options;
+    const pcScore = Math.round(pc.score);
+    const pcRating = pc.rating.replace(/_/g, " ")
+      .toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+
+    let pcClass = "fg-neutral";
+    if      (pcScore <= 24) pcClass = "fg-extreme-fear";
+    else if (pcScore <= 44) pcClass = "fg-fear";
+    else if (pcScore <= 55) pcClass = "fg-neutral";
+    else if (pcScore <= 74) pcClass = "fg-greed";
+    else                    pcClass = "fg-extreme-greed";
+
+    document.getElementById("pc-score").textContent   = pcScore;
+    document.getElementById("pc-score").className     = pcClass;
+    document.getElementById("pc-label").textContent   = pcRating;
+    document.getElementById("pc-label").className     = pcClass;
+
   } catch(e) {
-    document.getElementById("fg-label").textContent = "Unable to load";
+    document.getElementById("fg-label").textContent = "Unable to load — try refreshing";
+    document.getElementById("pc-label").textContent = "Unable to load";
   }
 }
 
 loadFearGreed();
+// ─────────────────────────────────────────────────────────────
+
+
+// ── NAAIM EXPOSURE INDEX FROM NAAIM.ORG ─────────────────────
+async function loadNAAIM() {
+  const url = "https://naaim.org/programs/naaim-exposure-index/";
+  try {
+    const res  = await fetch(CORS_PROXY + encodeURIComponent(url));
+    const html = await res.text();
+
+    // Extract current week's number (appears right after "number is*:")
+    const scoreMatch = html.match(/number\s+is\*?[\s\S]{0,60}?<\/h4>[\s\S]{0,80}?([\d]{1,3}\.[\d]{1,2})/i);
+    // Extract previous week from the data table (second row)
+    const tableMatch  = [...html.matchAll(/\|\s*[\d\/]+\s*\|\s*([\d\-\.]+)\s*\|/g)];
+
+    const score = scoreMatch  ? parseFloat(scoreMatch[1])  : null;
+    const prev  = tableMatch.length >= 2 ? parseFloat(tableMatch[1][1]) : null;
+
+    if (score !== null) {
+      // Colour logic: >75 = bullish green, 40–75 = neutral yellow, <40 = bearish red
+      let colour = "#d29922";
+      if      (score >= 75) colour = "#3fb950";
+      else if (score <  40) colour = "#f85149";
+
+      document.getElementById("naaim-score").textContent   = score.toFixed(2);
+      document.getElementById("naaim-score").style.color   = colour;
+      document.getElementById("naaim-label").textContent   =
+        score >= 75 ? "Bullish / Fully Invested" :
+        score >= 40 ? "Moderate / Mixed Exposure" : "Defensive / Reducing Risk";
+      if (prev !== null)
+        document.getElementById("naaim-prev").textContent  = `Previous week: ${prev.toFixed(2)}`;
+    } else {
+      document.getElementById("naaim-label").textContent   = "Data parsed — visit NAAIM.org for chart";
+    }
+  } catch(e) {
+    document.getElementById("naaim-label").textContent = "Unable to load — try refreshing";
+  }
+}
+
+loadNAAIM();
 // ─────────────────────────────────────────────────────────────
 
