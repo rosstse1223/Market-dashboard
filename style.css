@@ -33,7 +33,7 @@ h1 { color: #58a6ff; margin-bottom: 6px; font-size: 22px; }
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
-  min-width: 650px;
+  min-width: 900px;
 }
 
 #stock-table th {
@@ -129,3 +129,18 @@ h1 { color: #58a6ff; margin-bottom: 6px; font-size: 22px; }
   font-weight: normal;
 }
 .source-link:hover { color: #58a6ff; }
+
+/* MA cells centre-aligned */
+#stock-table td { text-align: left; }
+#stock-table th:nth-child(n+5):nth-child(-n+8),
+#stock-table td:nth-child(n+5):nth-child(-n+8) {
+  text-align: center;
+}
+
+/* VARS sparkline cell */
+#stock-table td:last-child {
+  padding: 3px 8px;
+  min-width: 100px;
+}
+
+/* ATRx warning colours applied inline */
